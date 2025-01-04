@@ -1,6 +1,7 @@
 import hashlib
 import uuid
 from typing import Optional
+import sqlite3
 from database.db_manager import DatabaseManager
 
 class AuthService:
@@ -14,7 +15,7 @@ class AuthService:
         user_id = str(uuid.uuid4())
         password_hash = self.hash_password(password)
         
-        with self.db_manager.connect() as conn:
+        with sqlite3.connect(self.db_manager.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(
                 "INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)",
@@ -25,7 +26,7 @@ class AuthService:
     def authenticate(self, username: str, password: str) -> Optional[str]:
         password_hash = self.hash_password(password)
         
-        with self.db_manager.connect() as conn:
+        with sqlite3.connect(self.db_manager.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT id FROM users WHERE username = ? AND password_hash = ?",
