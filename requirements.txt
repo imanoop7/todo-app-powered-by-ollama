@@ -1,0 +1,2 @@
+ollama==0.1.5
+python-dateutil==2.8.2
